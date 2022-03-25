@@ -2,6 +2,7 @@ const express=require('express')
 const req = require('express/lib/request')
 const router =express.Router()
 const Author= require('../models/author')
+
 //All author's Route
 router.get('/',async(req,res)=>{
         let searchOptions={}
@@ -10,7 +11,7 @@ router.get('/',async(req,res)=>{
         }
     try{
         const authors=await Author.find(searchOptions)
-        res.render('author/index',{
+        res.render('author/',{
             author:authors,
             searchOptions:req.query
         })
@@ -40,6 +41,7 @@ router.post('/',async(req,res)=>{
             author: author,
             errorMessage:'Error creating Author'
             })
+            
         }
     })
 
