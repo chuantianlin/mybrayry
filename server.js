@@ -8,7 +8,7 @@ const indexRouter=require('./routes/index')
 const authorRouter=require('./routes/author')
 const bookRouter=require('./routes/books')
 const bodyParser=require('body-parser')
-
+const methodOverride=require('method-override')
 
 
 const mongoose=require('mongoose')
@@ -22,7 +22,7 @@ db.once('open',()=>console.log('Connetion to Mongoose'))
 app.use(bodyParser.json()); 
 // for parsing application/xwww-
 app.use(bodyParser.urlencoded({ extended: true })); 
-
+app.use(methodOverride('_method'))
 app.set('view engine','ejs')
 app.set('views',__dirname+'/views')
 app.set('layout','layout/layout')
