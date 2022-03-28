@@ -32,8 +32,8 @@ router.post('/',async(req,res)=>{
     }) 
     try{
             const newAuthor=await author.save()
-            //res.redirect(`author/${newAuthor.id}`)
-            res.redirect(`author`)
+            res.redirect(`/author/${newAuthor.id}`)
+           
 
     }
     catch{
@@ -45,9 +45,19 @@ router.post('/',async(req,res)=>{
         }
     })
 
-router.get('/:id',(req,res)=>{
-    res.send('Show author'+req.params.id)
-})
+    router.get('/:id',async (req,res)=>{
+
+        try{
+                const author= await Author.findById(req.params.id)
+                const books= await books.find({author:author.id}).linit(6).exec()
+                res.render('author/show',{author:author,booksByauthor:books})
+
+        }
+        catch{
+                res.redirect('/')
+        }
+    })
+    
 
 router.get('/:id/edit',async (req,res)=>{
     const author=await Author.findById(req.params.id)
@@ -61,13 +71,69 @@ router.get('/:id/edit',async (req,res)=>{
     
 })
 
-router.put('/:id', (req,res)=>{
+router.get('/:id', async (req,res)=>{
     
-    res.send('Show author'+req.params.id)
+    const author=new Author({
+        name:req.body.name
+    }) 
+    try{
+          author=await Author.findById(req.params.id)
+          await author.save()
+          res.redirect(`/author/${newAuthor.id}`)
+        
+
+    }
+    catch{
+        res.render('author/new',{
+            author: author,
+            errorMessage:'Error creating Author'
+            })
+            
+        }
+    })
+
+router.put('/:id',async (req,res)=>{
+   let author
+    try{ 
+          author=await Author.findById(req.params.id)
+          author.name=req.body.name
+          author.save()
+          res.redirect(`/author/${author.id}`)
+
+    }
+    catch{
+        if(author==null){
+            res.redirect('/')
+        }
+        else
+            {
+            res.render('author/edit',{
+            author: author,
+            errorMessage:'Error updating Author'
+            })
+         } 
+        }
 })
 
-router.delete('/:id',(req,res)=>{
-    res.send('Delte Author'+req.params.id)
+router.delete('/:id',async (req,res)=>{
+    let author
+    try{ 
+       
+          author=await Author.findById(req.params.id)
+          author.remove()
+          res.redirect('/author')
+
+    }
+    catch{
+        if(author==null){
+            res.redirect('/')
+        }
+        else
+            {
+                res.redirect(`/author/${authod.id}`)
+            }
+         
+        }
 })
 
 module.exports=router
